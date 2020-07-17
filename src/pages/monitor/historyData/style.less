@@ -1,0 +1,50 @@
+.history_conainer {
+    width: 100%;
+    min-height: 500px;
+    background: #fff;
+    padding: 16px 20px;
+
+    h4 {
+        font-size: 20px;
+        font-family: PingFangSC-Medium, PingFang SC;
+        font-weight: 500;
+        color: rgba(72, 84, 101, 1);
+        line-height: 28px;
+    }
+
+    .contentBox {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-column-gap: 15px;
+
+        .odd {
+            background: #fafafa;
+        }
+
+        .show_charts {
+            .frist {
+                margin-bottom: 20px;
+            }
+        }
+    }
+
+    :global {
+        .ant-divider-horizontal {
+            margin: 0 0 24px;
+        }
+
+        .ant-table-small {
+            border: none;
+        }
+        .ant-table-column-title {
+            font-size: 14px;
+            font-family: PingFangSC-Medium, PingFang SC;
+            font-weight: 600;
+            color: rgba(51, 51, 51, 1);
+        }
+
+        .ant-table-small > .ant-table-content > .ant-table-body {
+            margin: 0;
+        }
+    }
+}

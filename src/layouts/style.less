@@ -1,0 +1,36 @@
+.layout_conainer {
+    height: 100%;
+    width: 100%;
+
+    .layout {
+        height: 100%;
+    }
+
+    .header {
+        background: #fff;
+        padding: 0;
+        height: 50px;
+
+        position: fixed;
+        width: calc(100% - 200px);
+        z-index: 3;
+
+        box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+    }
+
+    .content {
+        margin: 16px 16px 0;
+        // background: #fff;
+        min-height: 480px;
+        margin-top: 66px;
+    }
+
+    .footer {
+        text-align: center;
+    }
+    :global {
+        .ant-layout-header {
+            line-height: 50px;
+        }
+    }
+}
