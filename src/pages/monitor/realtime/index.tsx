@@ -3,8 +3,9 @@ import { Table } from 'antd';
 import { connect } from 'dva';
 import LineChart from '@/components/lineChart';
 import styles from './style.less';
+import { Realtime } from '@/types';
 
-function Realtime({ dataSource }: Realtime.IndexProps) {
+function Realtimes({ dataSource }: Realtime.IndexProps) {
     const columns = [
         {
             title: 'ID',
@@ -60,4 +61,4 @@ const mapStateToProps = ({ realtime }: any) => {
     };
 };
 
-export default connect(mapStateToProps)(Realtime);
+export default connect(mapStateToProps)(Realtimes);

@@ -11,6 +11,10 @@ export default [
                 component: '@/pages/system/equipmentManagement',
             },
             {
+                path: '/equipment/add',
+                component: '@/pages/system/equipmentAdd',
+            },
+            {
                 path: '/personnel',
                 component: '@/pages/system/personnelManagement',
             },
