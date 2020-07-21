@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
-import { Divider } from 'antd';
+import React, { useState, useRef } from 'react';
+import { Divider, Modal } from 'antd';
 import TableListCardPage from '@/components/tableListCardPage';
+import CollectionCreateForm from './modalFrom'
 
 function index() {
-    const [visible, setVisible] = useState<Boolean>(false);
+    const getFormValue = useRef();
+    const [visible, setVisible] = useState<boolean>(false);
+    const [a, setA] = useState<any>()
+    const [confirmLoading, setConfirmLoading] = useState<boolean>(false)
     const columns = [
         {
             title: '姓名',
@@ -26,9 +30,10 @@ function index() {
             render: (record: any) => {
                 return (
                     <span>
-                        <span>编辑</span>
+                        <span style={styles.action}>编辑</span>
                         <Divider type="vertical" />
                         <span
+                            style={styles.action}
                             onClick={() => {
                                 handleSigleDel(record);
                             }}
@@ -68,6 +73,12 @@ function index() {
         console.log('va', record);
     }
 
+    const handleCreate = (value) => {
+        console.log(value)
+    }
+
+
+
     return (
         <div>
             <TableListCardPage
@@ -79,8 +90,25 @@ function index() {
                 add={() => setVisible(true)}
                 lotSizeDel={lotSizeDel}
             />
+
+            <CollectionCreateForm
+                wrappedComponentRef={getFormValue}
+                visible={visible}
+                confirmLoading={confirmLoading}
+                onCancel={() => setVisible(false)}
+                onCreate={handleCreate}
+            />
+
+
         </div>
     );
+}
+
+const styles = {
+    action: {
+        color: '#53A8E2',
+        cursor: 'pointer'
+    }
 }
 
 export default index;

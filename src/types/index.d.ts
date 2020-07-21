@@ -47,3 +47,14 @@ declare namespace Realtime {
         dataSource: any[];
     }
 }
+
+declare namespace AuthManagement {
+    interface ModalFrom {
+        form: any
+        visible: boolean
+        confirmLoading?: boolean
+        // treeData: any[]
+        onCancel: () => void
+        onCreate: (value: any) => void
+    }
+}
