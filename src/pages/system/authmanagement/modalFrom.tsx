@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { Modal, Form, Input, Tree } from 'antd'
 import { AuthManagement } from '@/types'
 import styles from './modalFrom.less'
-import PropsTypes from 'prop-types'
 
 const { TextArea } = Input;
 const { TreeNode } = Tree;
@@ -14,42 +13,33 @@ function AuthModal({ form, visible, confirmLoading, onCancel, onCreate }: AuthMa
 
     const treeData = [
         {
-            title: '0-0',
+            title: '数据监控',
             key: '0-0',
             children: [
                 {
-                    title: '0-0-0',
+                    title: '实时监控',
                     key: '0-0-0',
                 },
                 {
-                    title: '0-0-1',
+                    title: '历史记录',
                     key: '0-0-1',
                 },
-                {
-                    title: '0-0-2',
-                    key: '0-0-2',
-                },
             ],
         },
         {
-            title: '0-1',
+            title: '系统设置',
             key: '0-1',
             children: [
-                { title: '0-1-0-0', key: '0-1-0-0' },
-                { title: '0-1-0-1', key: '0-1-0-1' },
-                { title: '0-1-0-2', key: '0-1-0-2' },
+                { title: '权限管理', key: '0-1-0-0' },
+                { title: '人员管理', key: '0-1-0-1' },
+                { title: '设备管理', key: '0-1-0-2' },
             ],
-        },
-        {
-            title: '0-2',
-            key: '0-2',
         },
     ];
 
     const TreeComponent = ({ changEvent }: any) => {
         return <Tree
             checkable
-            // expandedKeys={['STATUS']}
             checkedKeys={checkList}
             onCheck={changEvent}
         >
@@ -70,10 +60,9 @@ function AuthModal({ form, visible, confirmLoading, onCancel, onCreate }: AuthMa
         });
 
     const onCheck = (checkedKeys: any) => {
-        setIsRequired(false)
+        setIsRequired(true)
         //过滤掉父级的key
         // checkedKeys = checkedKeys.filter(item => item !== 'STATUS')
-        // this.setState({ checkList: checkedKeys })
         setCheckList(checkedKeys)
     }
 
@@ -81,7 +70,6 @@ function AuthModal({ form, visible, confirmLoading, onCancel, onCreate }: AuthMa
         <Modal
             title="新增角色"
             visible={visible}
-
             confirmLoading={confirmLoading}
             onCancel={onCancel}
             width={600}
@@ -91,8 +79,13 @@ function AuthModal({ form, visible, confirmLoading, onCancel, onCreate }: AuthMa
                 form
                     .validateFields()
                     .then((values: any) => {
-                        console.log('checkList :>> ', checkList);
-                        onCreate(values);
+                        let val = Object.assign({}, values, { tt: checkList })
+                        const isSelect = checkList.length ? true : false
+                        if (isSelect) {
+                            onCreate(val);
+                            setCheckList([])
+                        }
+                        setIsRequired(isSelect)
                     })
                     .catch((info: any) => {
                         console.log('Validate Failed:', info);
@@ -111,11 +104,14 @@ function AuthModal({ form, visible, confirmLoading, onCancel, onCreate }: AuthMa
                             {getFieldDecorator('description')(<TextArea rows={2} placeholder='请输入备注' />)}
                         </Form.Item>
                     </div>
-                    <div className={styles.leftBox}>
-                        <Form.Item label="权限列表">
-                            {getFieldDecorator('tt', {
-                                rules: [{ required: isRequired, message: '请选择' }],
-                            })(<TreeComponent changEvent={onCheck} />)}
+                    <div className={styles.rightBox}>
+                        <Form.Item label={<div>
+                            <span className={styles.start}>*</span>
+                            权限列表
+                            <div className={styles.errText} style={{ display: isRequired ? 'none' : 'block' }}>请选择</div>
+                        </div>}>
+                            {getFieldDecorator('tt')(< TreeComponent changEvent={onCheck} />)}
+
                         </Form.Item>
                     </div>
                 </div>
@@ -125,10 +121,5 @@ function AuthModal({ form, visible, confirmLoading, onCancel, onCreate }: AuthMa
 }
 
 const CollectionCreateForm: any = Form.create({ name: 'form_in_modal' })(AuthModal)
-
-// CollectionCreateForm.prototype = {
-//     visible: PropsTypes.bool,
-//     confirmLoading: PropsTypes.bool
-// }
 
 export default CollectionCreateForm

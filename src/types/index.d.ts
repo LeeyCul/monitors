@@ -1,3 +1,4 @@
+import { Dispatch } from 'umi'
 import { ColumnProps } from 'antd/lib/table/interface';
 
 declare namespace Layouts {
@@ -39,6 +40,13 @@ declare namespace Common {
         queryName: string;
         handleQuery: (value: string) => void;
         add: () => void;
+    }
+}
+
+declare namespace ILogin {
+    interface Logins {
+        form: any,
+        dispatch: Dispatch
     }
 }
 

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useHistory } from 'umi'
 import { Divider } from 'antd';
 import TableListCardPage from '@/components/tableListCardPage';
 
 function index() {
     const [visible, setVisible] = useState<Boolean>(false);
+    const history = useHistory()
     const columns = [
         {
             title: '姓名',
@@ -76,7 +78,7 @@ function index() {
             title="设备管理"
             queryName="人员名称"
             handleQuery={handleQuery}
-            add={() => setVisible(true)}
+            add={() => history.push('/equipment/add')}
             lotSizeDel={lotSizeDel}
         />
     );

@@ -1,13 +1,22 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import { Layout } from 'antd';
+import { useHistory } from 'umi'
 import Logo from './logo';
 import MenuNav from './nav';
 import HeaderView from './header';
 import styles from './style.less';
+import { Layouts } from '@/types';
 
 const { Header, Content, Footer, Sider } = Layout;
 
 const BasicLayout: React.FC<Layouts.IProps> = ({ children }) => {
+    const history = useHistory()
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            history.replace('/login');
+        }
+    }, [])
     return (
         <div className={styles.layout_conainer}>
             <Layout className={styles.layout}>

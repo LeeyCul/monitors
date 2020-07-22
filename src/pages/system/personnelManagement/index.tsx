@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Divider } from 'antd';
 import TableListCardPage from '@/components/tableListCardPage';
+import ModalForm from './modalForm'
 
 function index() {
     const [visible, setVisible] = useState<Boolean>(false);
+    const [confirmLoading, setConfirmLoading] = useState<boolean>(false)
     const columns = [
         {
             title: '姓名',
@@ -68,16 +70,31 @@ function index() {
         console.log('va', record);
     }
 
+    const handleCreate = (value: any) => {
+
+        console.log('object :>> ', value);
+        setVisible(false)
+
+    }
+
     return (
-        <TableListCardPage
-            columns={columns}
-            dataSource={dataSource}
-            title="人员管理"
-            queryName="人员名称"
-            handleQuery={handleQuery}
-            add={() => setVisible(true)}
-            lotSizeDel={lotSizeDel}
-        />
+        <div>
+            <TableListCardPage
+                columns={columns}
+                dataSource={dataSource}
+                title="人员管理"
+                queryName="人员名称"
+                handleQuery={handleQuery}
+                add={() => setVisible(true)}
+                lotSizeDel={lotSizeDel}
+            />
+            <ModalForm
+                visible={visible}
+                confirmLoading={confirmLoading}
+                onCancel={() => setVisible(false)}
+                onCreate={handleCreate}
+            />
+        </div>
     );
 }
 

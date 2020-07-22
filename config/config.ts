@@ -10,4 +10,11 @@ export default defineConfig({
         hmr: false,
     },
     routes,
+    proxy: {
+        '/v1': {
+            target: 'http://hwy.feelbang.com:8080',
+            pathRewrite: { '^/v1': '' },
+            changeOrigin: true
+        }
+    }
 });

@@ -73,8 +73,11 @@ function index() {
         console.log('va', record);
     }
 
-    const handleCreate = (value) => {
-        console.log(value)
+    const handleCreate = (value: any) => {
+        if (value) {
+            console.log('object :>> ', value);
+            setVisible(false)
+        }
     }
 
 
