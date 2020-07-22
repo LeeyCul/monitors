@@ -1,15 +1,21 @@
-import React, { useState } from 'react'
-import { Modal, Form, Input, Tree } from 'antd'
-import { AuthManagement } from '@/types'
-import styles from './modalFrom.less'
+import React, { useState } from 'react';
+import { Modal, Form, Input, Tree } from 'antd';
+import { AuthManagement } from '@/types';
+import styles from './modalFrom.less';
 
 const { TextArea } = Input;
 const { TreeNode } = Tree;
 
-function AuthModal({ form, visible, confirmLoading, onCancel, onCreate }: AuthManagement.ModalFrom) {
-    const { getFieldDecorator } = form
-    const [checkList, setCheckList] = useState([])
-    const [isRequired, setIsRequired] = useState<boolean>(true)
+function AuthModal({
+    form,
+    visible,
+    confirmLoading,
+    onCancel,
+    onCreate,
+}: AuthManagement.ModalFrom) {
+    const { getFieldDecorator } = form;
+    const [checkList, setCheckList] = useState([]);
+    const [isRequired, setIsRequired] = useState<boolean>(true);
 
     const treeData = [
         {
@@ -38,14 +44,12 @@ function AuthModal({ form, visible, confirmLoading, onCancel, onCreate }: AuthMa
     ];
 
     const TreeComponent = ({ changEvent }: any) => {
-        return <Tree
-            checkable
-            checkedKeys={checkList}
-            onCheck={changEvent}
-        >
-            {renderTreeNodes(treeData)}
-        </Tree>
-    }
+        return (
+            <Tree checkable checkedKeys={checkList} onCheck={changEvent}>
+                {renderTreeNodes(treeData)}
+            </Tree>
+        );
+    };
 
     const renderTreeNodes = (data: any) =>
         data.map((item: any) => {
@@ -60,11 +64,11 @@ function AuthModal({ form, visible, confirmLoading, onCancel, onCreate }: AuthMa
         });
 
     const onCheck = (checkedKeys: any) => {
-        setIsRequired(true)
+        setIsRequired(true);
         //过滤掉父级的key
         // checkedKeys = checkedKeys.filter(item => item !== 'STATUS')
-        setCheckList(checkedKeys)
-    }
+        setCheckList(checkedKeys);
+    };
 
     return (
         <Modal
@@ -73,19 +77,19 @@ function AuthModal({ form, visible, confirmLoading, onCancel, onCreate }: AuthMa
             confirmLoading={confirmLoading}
             onCancel={onCancel}
             width={600}
-            okText='确定'
+            okText="确定"
             cancelText="取消"
             onOk={() => {
-                form
-                    .validateFields()
+                form.validateFields()
                     .then((values: any) => {
-                        let val = Object.assign({}, values, { tt: checkList })
-                        const isSelect = checkList.length ? true : false
+                        let val = Object.assign({}, values, { tt: checkList });
+                        const isSelect = checkList.length ? true : false;
                         if (isSelect) {
                             onCreate(val);
-                            setCheckList([])
+                            form.resetFields();
+                            setCheckList([]);
                         }
-                        setIsRequired(isSelect)
+                        setIsRequired(isSelect);
                     })
                     .catch((info: any) => {
                         console.log('Validate Failed:', info);
@@ -97,29 +101,52 @@ function AuthModal({ form, visible, confirmLoading, onCancel, onCreate }: AuthMa
                     <div>
                         <Form.Item label="角色名称">
                             {getFieldDecorator('t', {
-                                rules: [{ required: true, message: '请输入机构名称' }],
+                                rules: [
+                                    {
+                                        required: true,
+                                        message: '请输入机构名称',
+                                    },
+                                ],
                             })(<Input />)}
                         </Form.Item>
                         <Form.Item label="备注">
-                            {getFieldDecorator('description')(<TextArea rows={2} placeholder='请输入备注' />)}
+                            {getFieldDecorator('description')(
+                                <TextArea rows={2} placeholder="请输入备注" />,
+                            )}
                         </Form.Item>
                     </div>
                     <div className={styles.rightBox}>
-                        <Form.Item label={<div>
-                            <span className={styles.start}>*</span>
-                            权限列表
-                            <div className={styles.errText} style={{ display: isRequired ? 'none' : 'block' }}>请选择</div>
-                        </div>}>
-                            {getFieldDecorator('tt')(< TreeComponent changEvent={onCheck} />)}
-
+                        <Form.Item
+                            label={
+                                <div>
+                                    <span className={styles.start}>*</span>
+                                    权限列表
+                                    <div
+                                        className={styles.errText}
+                                        style={{
+                                            display: isRequired
+                                                ? 'none'
+                                                : 'block',
+                                        }}
+                                    >
+                                        请选择
+                                    </div>
+                                </div>
+                            }
+                        >
+                            {getFieldDecorator('tt')(
+                                <TreeComponent changEvent={onCheck} />,
+                            )}
                         </Form.Item>
                     </div>
                 </div>
             </Form>
         </Modal>
-    )
+    );
 }
 
-const CollectionCreateForm: any = Form.create({ name: 'form_in_modal' })(AuthModal)
+const CollectionCreateForm: any = Form.create({ name: 'form_in_modal' })(
+    AuthModal,
+);
 
-export default CollectionCreateForm
+export default CollectionCreateForm;

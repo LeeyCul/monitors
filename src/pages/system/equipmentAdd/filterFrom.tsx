@@ -1,10 +1,16 @@
-import React from 'react';
-import { Form, Input, DatePicker, Row, Col, } from 'antd';
+import React, { useImperativeHandle, useRef, forwardRef } from 'react';
+import { Form, Input, DatePicker, Row, Col } from 'antd';
 
 const { TextArea } = Input;
 
-function FilterFrom(props: any) {
-    const { getFieldDecorator } = props.form;
+function FilterFrom(props: any, ref: any) {
+    const { form } = props;
+    const { getFieldDecorator } = form;
+
+    const formRef = useRef();
+    useImperativeHandle(ref, () => ({
+        formFields: props.form.getFieldsValue(),
+    }));
     const formItemLayout = {
         labelCol: {
             xs: { span: 5 },
@@ -27,27 +33,43 @@ function FilterFrom(props: any) {
         },
     };
 
-    function handleSubmit() { }
-
     return (
         <div>
-            <Form  {...formItemLayout} onSubmit={handleSubmit}>
+            <Form
+                // ref={formRef}
+                {...formItemLayout}
+                // onSubmit={() => {
+                //     form.validateFields()
+                //         .then((values: any) => {
+                //             form.resetFields();
+                //             onCreate(values);
+                //         })
+                //         .catch((info: any) => {
+                //             console.log('Validate Failed:', info);
+                //         });
+                // }}
+            >
                 <Row gutter={18}>
                     <Col xl={6} md={12} sm={24}>
                         <Form.Item label="设备名称">
-                            {getFieldDecorator('username', {
+                            {getFieldDecorator('name', {
                                 rules: [
                                     {
                                         required: true,
                                         message: '请输入设备名称',
                                     },
                                 ],
-                            })(<Input placeholder="请输入设备名称" style={{ width: '100%' }} />)}
+                            })(
+                                <Input
+                                    placeholder="请输入设备名称"
+                                    style={{ width: '100%' }}
+                                />,
+                            )}
                         </Form.Item>
                     </Col>
                     <Col xl={6} md={12} sm={24}>
                         <Form.Item label="设备编号">
-                            {getFieldDecorator('nickname', {
+                            {getFieldDecorator('number', {
                                 rules: [
                                     {
                                         required: true,
@@ -59,14 +81,14 @@ function FilterFrom(props: any) {
                     </Col>
                     <Col xl={6} md={12} sm={24}>
                         <Form.Item label="生产厂商">
-                            {getFieldDecorator('username')(
+                            {getFieldDecorator('manufacturer')(
                                 <Input placeholder="请输入生产厂商" />,
                             )}
                         </Form.Item>
                     </Col>
                     <Col xl={6} md={12} sm={24}>
                         <Form.Item label="上线时间">
-                            {getFieldDecorator('nickname')(
+                            {getFieldDecorator('createdTime')(
                                 <DatePicker
                                     style={{ width: '100%' }}
                                     placeholder="请选择时间"
@@ -76,8 +98,11 @@ function FilterFrom(props: any) {
                     </Col>
                     <Col xl={17} md={12} sm={24}>
                         <Form.Item label="备注信息" {...formItemLayouts}>
-                            {getFieldDecorator('nickname')(
-                                <TextArea rows={2} placeholder="请输入备注信息" />,
+                            {getFieldDecorator('description')(
+                                <TextArea
+                                    rows={2}
+                                    placeholder="请输入备注信息"
+                                />,
                             )}
                         </Form.Item>
                     </Col>
@@ -87,6 +112,6 @@ function FilterFrom(props: any) {
     );
 }
 
-const Filter = Form.create({})(FilterFrom);
+const Filter: any = Form.create({})(forwardRef(FilterFrom));
 
 export default Filter;

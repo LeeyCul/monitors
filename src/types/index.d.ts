@@ -1,4 +1,4 @@
-import { Dispatch } from 'umi'
+import { Dispatch } from 'umi';
 import { ColumnProps } from 'antd/lib/table/interface';
 
 declare namespace Layouts {
@@ -45,8 +45,8 @@ declare namespace Common {
 
 declare namespace ILogin {
     interface Logins {
-        form: any,
-        dispatch: Dispatch
+        form: any;
+        dispatch: Dispatch;
     }
 }
 
@@ -58,11 +58,21 @@ declare namespace Realtime {
 
 declare namespace AuthManagement {
     interface ModalFrom {
-        form: any
-        visible: boolean
-        confirmLoading?: boolean
+        form: any;
+        visible: boolean;
+        confirmLoading?: boolean;
         // treeData: any[]
-        onCancel: () => void
-        onCreate: (value: any) => void
+        onCancel: () => void;
+        onCreate: (value: any) => void;
+    }
+}
+
+declare namespace EquipmentAdd {
+    interface AddCard {
+        showModa: (trem: string) => void;
+    }
+
+    interface AddInex {
+        dispatch: Dispatch;
     }
 }
