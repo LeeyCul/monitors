@@ -27,6 +27,7 @@ declare namespace Common {
 
     interface TableListCardPage {
         columns: any[];
+        loading?: boolean;
         dataSource: any[];
         selectable?: boolean;
         title: string;

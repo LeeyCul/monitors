@@ -1,31 +1,46 @@
 import React from 'react';
 import { Divider, Table } from 'antd';
+import { connect } from 'umi'
 import Filter from './filter';
 import LineChart from '@/components/lineChart';
 import styles from './style.less';
 
-function HistoryData() {
+function HistoryData({ dispatch }) {
     const columns = [
         {
-            title: 'ID',
-            dataIndex: 'id',
+            title: '采集时间',
+            dataIndex: 'update_time',
             key: 'id',
         },
         {
-            title: '用户',
+            title: 'COD',
             dataIndex: 'name',
             key: 'name',
         },
         {
-            title: '时间',
-            dataIndex: 'update_time',
+            title: '氨氮',
+            dataIndex: 'update_time1',
+            key: 'update_time',
+        },
+        {
+            title: '总磷',
+            dataIndex: 'update_time1',
+            key: 'update_time',
+        },
+        {
+            title: '废水流量',
+            dataIndex: 'update_time1',
             key: 'update_time',
         },
     ];
+    function handleQuery(value: { startTs?: number, endTs?: number, keys: string }) {
+        dispatch({ type: 'history/getHistoryData', payload: value })
+    }
+
     return (
         <div className={styles.history_conainer}>
             <h4>历史数据查询</h4>
-            <Filter />
+            <Filter onQuery={handleQuery} />
             <Divider />
             <div className={styles.contentBox}>
                 <Table
@@ -47,4 +62,8 @@ function HistoryData() {
     );
 }
 
-export default HistoryData;
+const mapStateToProps = ({ history, loading }: any) => {
+    return history
+}
+
+export default connect(mapStateToProps)(HistoryData);

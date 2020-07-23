@@ -8,13 +8,19 @@ moment.locale('zh-cn');
 const { RangePicker } = DatePicker;
 
 function Filter(props: any) {
-    const { getFieldDecorator, resetFields } = props.form;
+    const { onQuery, form } = props
+    const { getFieldDecorator, resetFields } = form;
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         props.form.validateFields((err: any, values: any) => {
             if (!err) {
-                console.log('Received values of form: ', values);
+                const timeArr = values.time && values.time
+                let startTs = values.time && moment(timeArr[0]).unix()
+                let endTs = values.time && moment(timeArr[1]).unix()
+                let result = Object.assign({}, values, { startTs, endTs })
+                delete result.time
+                onQuery(result)
             }
         });
     }
@@ -28,7 +34,7 @@ function Filter(props: any) {
         >
             <Form layout="inline" onSubmit={handleSubmit}>
                 <Form.Item label="时间选择">
-                    {getFieldDecorator('username')(
+                    {getFieldDecorator('time')(
                         <RangePicker
                             locale={locale}
                             style={{
@@ -39,11 +45,11 @@ function Filter(props: any) {
                     )}
                 </Form.Item>
                 <Form.Item>
-                    {getFieldDecorator('radio-group', { initialValue: 'a' })(
+                    {getFieldDecorator('keys', { initialValue: 'm' })(
                         <Radio.Group>
-                            <Radio.Button value="a">分钟数据</Radio.Button>
-                            <Radio.Button value="b">小时数据</Radio.Button>
-                            <Radio.Button value="c">日数据</Radio.Button>
+                            <Radio.Button value="m">分钟数据</Radio.Button>
+                            <Radio.Button value="h">小时数据</Radio.Button>
+                            {/* <Radio.Button value="">日数据</Radio.Button> */}
                         </Radio.Group>,
                     )}
                 </Form.Item>
@@ -66,6 +72,6 @@ function Filter(props: any) {
     );
 }
 
-const FilterForm = Form.create()(Filter);
+const FilterForm: any = Form.create()(Filter);
 
 export default FilterForm;

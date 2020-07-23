@@ -49,12 +49,14 @@ function index() {
             name: '胡彦斌',
             age: 32,
             address: '西湖区湖底公园1号',
+            id: '1'
         },
         {
             key: '2',
             name: '胡彦祖',
             age: 42,
             address: '西湖区湖底公园1号',
+            id: '2'
         },
     ];
 

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { Icon, Table, Button, Divider } from 'antd';
-import { connect } from 'umi';
+import { Icon, Table, Button, Divider, Popconfirm } from 'antd';
+import { connect, history } from 'umi';
 import FilterFrom from './filterFrom';
 import AddCard from './addCard';
 import ModalForm from './modalForm';
@@ -79,7 +79,9 @@ function index({ dispatch }: EquipmentAdd.AddInex) {
     return (
         <div className={styles.equipment_add_conainer}>
             <div className={styles.title_box}>
-                <Icon type="left" style={{ height: 22, cursor: 'pointer' }} />
+                <Icon type="left" style={{ height: 22, cursor: 'pointer' }} onClick={() => {
+                    history.push('/equipment')
+                }} />
                 <h4>新增设备</h4>
             </div>
             <FilterFrom
@@ -98,14 +100,22 @@ function index({ dispatch }: EquipmentAdd.AddInex) {
                     />
                 </div>
                 <AddCard
-                    showModa={trem => {
+                    showModa={(trem: any) => {
                         setTrem(trem);
                         setVisible(true);
                     }}
                 />
             </div>
             <div>
-                <Button style={{ marginRight: 10 }}>取消</Button>
+                <Popconfirm
+                    title="您确定要取消吗?取消后会清空所有填写数据"
+                    onConfirm={() => { history.push('/equipment') }}
+                    okText="确定"
+                    cancelText="取消"
+                >
+                    <Button style={{ marginRight: 10 }}>取消</Button>
+                </Popconfirm>
+
                 <Button type="primary" onClick={handleSubmit}>
                     确定
                 </Button>

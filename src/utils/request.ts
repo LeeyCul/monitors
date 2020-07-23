@@ -51,11 +51,11 @@ request.interceptors.request.use((url: string, options: any) => {
     const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'X-Authorization': token
+        'X-Authorization': `Bearer ${token}`
     }
     return (
         {
-            url,
+            url: encodeURI(url),
             options: {
                 ...options,
                 headers

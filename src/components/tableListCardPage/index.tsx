@@ -13,12 +13,15 @@ const TableListCardPage: FC<Common.TableListCardPage> = ({
     handleQuery,
     add,
     lotSizeDel,
+    loading
 }) => {
     const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
 
     const rowSelection = {
         selectedRowKeys,
-        onChange: (selectedRowKeys: any) => setSelectedRowKeys(selectedRowKeys),
+        onChange: (selectedRowKeys: any) => {
+            setSelectedRowKeys(selectedRowKeys)
+        },
     };
 
     return (
@@ -61,11 +64,12 @@ const TableListCardPage: FC<Common.TableListCardPage> = ({
                 showIcon
             />
             <Table
+                loading={loading}
                 dataSource={dataSource}
                 columns={columns}
                 rowClassName={(r, k) => (k % 2 === 0 ? '' : styles.odd)}
                 rowSelection={selectable ? rowSelection : undefined}
-                rowKey={rc => JSON.stringify(rc.age)}
+                rowKey={rc => JSON.stringify(rc.id.id)}
             />
         </div>
     );
