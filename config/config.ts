@@ -14,7 +14,7 @@ export default defineConfig({
         '/v1': {
             target: 'http://hwy.feelbang.com:8080',
             pathRewrite: { '^/v1': '' },
-            changeOrigin: true
-        }
-    }
+            changeOrigin: true,
+        },
+    },
 });

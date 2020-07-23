@@ -9,7 +9,11 @@ function FilterFrom(props: any, ref: any) {
 
     const formRef = useRef();
     useImperativeHandle(ref, () => ({
-        formFields: props.form.getFieldsValue(),
+        formFields: props.form.validateFields,
+        formFieldsValue: (value: any) => {
+            console.log('value :>> ', value, props);
+            props.form.setFieldsValue(value);
+        },
     }));
     const formItemLayout = {
         labelCol: {
@@ -35,20 +39,7 @@ function FilterFrom(props: any, ref: any) {
 
     return (
         <div>
-            <Form
-                // ref={formRef}
-                {...formItemLayout}
-                // onSubmit={() => {
-                //     form.validateFields()
-                //         .then((values: any) => {
-                //             form.resetFields();
-                //             onCreate(values);
-                //         })
-                //         .catch((info: any) => {
-                //             console.log('Validate Failed:', info);
-                //         });
-                // }}
-            >
+            <Form {...formItemLayout}>
                 <Row gutter={18}>
                     <Col xl={6} md={12} sm={24}>
                         <Form.Item label="设备名称">
@@ -98,7 +89,7 @@ function FilterFrom(props: any, ref: any) {
                     </Col>
                     <Col xl={17} md={12} sm={24}>
                         <Form.Item label="备注信息" {...formItemLayouts}>
-                            {getFieldDecorator('description')(
+                            {getFieldDecorator('label')(
                                 <TextArea
                                     rows={2}
                                     placeholder="请输入备注信息"

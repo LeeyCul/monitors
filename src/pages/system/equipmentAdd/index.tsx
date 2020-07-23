@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
-import { Icon, Table, Button, Divider, Popconfirm } from 'antd';
+import React, { useState, useRef, useEffect } from 'react';
+import { Icon, Table, Button, Divider, Popconfirm, message } from 'antd';
 import { connect, history } from 'umi';
+import moment from 'moment';
 import FilterFrom from './filterFrom';
 import AddCard from './addCard';
 import ModalForm from './modalForm';
@@ -19,8 +20,8 @@ function index({ dispatch }: EquipmentAdd.AddInex) {
     const columns: any = [
         {
             title: '指标名称',
-            dataIndex: 'gateway',
-            key: 'gateway',
+            dataIndex: 'target',
+            key: 'target',
             render: (item: string) => <span>{quotaName[item]}</span>,
         },
         {
@@ -33,8 +34,8 @@ function index({ dispatch }: EquipmentAdd.AddInex) {
         },
         {
             title: '备注',
-            dataIndex: 'description',
-            key: 'description',
+            dataIndex: 'description1',
+            key: 'description1',
         },
         {
             title: '操作',
@@ -59,8 +60,12 @@ function index({ dispatch }: EquipmentAdd.AddInex) {
         },
     ];
 
+    useEffect(() => {
+        // getFormValue.current.formFieldsValue({ name: 11 });
+    });
+
     const handleCreate = (value: any) => {
-        const objVal = Object.assign({}, value, { gateway: trem });
+        const objVal = Object.assign({}, value, { target: trem });
         setData([...data, objVal]);
         setVisible(false);
     };
@@ -73,15 +78,43 @@ function index({ dispatch }: EquipmentAdd.AddInex) {
     }
 
     function handleSubmit() {
-        const fields = getFormValue.current.formFields;
-        dispatch({ type: 'equipment/addEquipment', payload: fields });
+        const { formFields } = getFormValue.current;
+        formFields().then((value: any) => {
+            const { name, number, manufacturer, createdTime, label } = value;
+            const resultVal = {
+                name,
+                type: 'test',
+                label: '测试',
+                additionalInfo: {
+                    gateway: false,
+                    description: '',
+
+                    // description: data,
+                    // number,
+                    // manufacturer,
+                    // createdTime: moment(createdTime).unix(),
+                },
+            };
+            if (data.length) {
+                dispatch({
+                    type: 'equipment/addEquipment',
+                    payload: resultVal,
+                });
+            } else {
+                message.warning('指标为必填项，请添加指标');
+            }
+        });
     }
     return (
         <div className={styles.equipment_add_conainer}>
             <div className={styles.title_box}>
-                <Icon type="left" style={{ height: 22, cursor: 'pointer' }} onClick={() => {
-                    history.push('/equipment')
-                }} />
+                <Icon
+                    type="left"
+                    style={{ height: 22, cursor: 'pointer' }}
+                    onClick={() => {
+                        history.push('/equipment');
+                    }}
+                />
                 <h4>新增设备</h4>
             </div>
             <FilterFrom
@@ -109,7 +142,9 @@ function index({ dispatch }: EquipmentAdd.AddInex) {
             <div>
                 <Popconfirm
                     title="您确定要取消吗?取消后会清空所有填写数据"
-                    onConfirm={() => { history.push('/equipment') }}
+                    onConfirm={() => {
+                        history.push('/equipment');
+                    }}
                     okText="确定"
                     cancelText="取消"
                 >

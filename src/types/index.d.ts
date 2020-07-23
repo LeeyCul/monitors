@@ -69,6 +69,13 @@ declare namespace AuthManagement {
 }
 
 declare namespace EquipmentAdd {
+    interface Istate {
+        visible: boolean;
+        confirmLoading: boolean;
+        data: any[];
+        trem: any;
+    }
+
     interface AddCard {
         showModa: (trem: string) => void;
     }

@@ -1,6 +1,6 @@
 import { extend } from 'umi-request';
-import { message } from "antd";
-import { history } from 'umi'
+import { message } from 'antd';
+import { history } from 'umi';
 
 const codeMessage: any = {
     200: '服务器成功返回请求的数据。',
@@ -27,7 +27,8 @@ const errorHandler = (error: any) => {
     const { response } = error;
 
     if (response && response.status) {
-        const errorText: any = codeMessage[response.status] || response.statusText;
+        const errorText: any =
+            codeMessage[response.status] || response.statusText;
         // const { status, url } = response;
         message.error(errorText);
     }
@@ -37,38 +38,36 @@ const errorHandler = (error: any) => {
 
 const request = extend({
     errorHandler,
-    prefix: 'v1',
+    prefix: 'http://hwy.feelbang.com:8080',
     credentials: 'include', // 默认请求是否带上cookie
-})
-/** 
+});
+/**
  * request拦截器, 改变url 或 options.
-*/
+ */
 request.interceptors.request.use((url: string, options: any) => {
-    let token = localStorage.getItem("token")
+    let token = localStorage.getItem('token');
     if (!token) {
-        history.push('/login')
+        history.push('/login');
     }
     const headers = {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-Authorization': `Bearer ${token}`
-    }
-    return (
-        {
-            url: encodeURI(url),
-            options: {
-                ...options,
-                headers
-            },
-        }
-    );
+        Accept: 'application/json',
+        'X-Authorization': `Bearer ${token}`,
+    };
+    return {
+        url: encodeURI(url),
+        options: {
+            ...options,
+            headers,
+        },
+    };
 });
 
-/** 
+/**
  * response拦截器, 处理response
  */
-request.interceptors.response.use(async (response) => {
-    return response
+request.interceptors.response.use(async response => {
+    return response;
 });
 
 export default request;

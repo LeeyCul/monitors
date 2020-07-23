@@ -45,7 +45,7 @@ function AuthModal({
                     })(<Input />)}
                 </Form.Item>
                 <Form.Item label="备注" style={styles.marginB2}>
-                    {getFieldDecorator('description', {
+                    {getFieldDecorator('description1', {
                         rules: [{ required: false, message: '请输入' }],
                     })(<TextArea rows={2} />)}
                 </Form.Item>
