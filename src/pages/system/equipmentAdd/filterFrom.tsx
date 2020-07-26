@@ -11,7 +11,6 @@ function FilterFrom(props: any, ref: any) {
     useImperativeHandle(ref, () => ({
         formFields: props.form.validateFields,
         formFieldsValue: (value: any) => {
-            console.log('value :>> ', value, props);
             props.form.setFieldsValue(value);
         },
     }));

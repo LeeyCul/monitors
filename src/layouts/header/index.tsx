@@ -1,13 +1,16 @@
 import React from 'react';
-import { useLocation } from 'umi';
+import { useLocation, history } from 'umi';
 import { Breadcrumb, Avatar, Icon } from 'antd';
 import style from './style.less';
 
 const Header = () => {
     const breadcrumbNameMap: any = {
         '/': ['数据监控', '实时数据监测'],
-        '/1': ['数据监控', '历史数据查询'],
-        '/2': ['系统设置', '日志管理'],
+        '/history': ['数据监控', '历史数据查询'],
+        '/auth': ['系统设置', '权限管理'],
+        '/personnel': ['系统设置', '人员管理'],
+        '/equipment': ['系统设置', '设备管理'],
+        '/equipment/add': ['系统设置', '设备管理'],
     };
     const location = useLocation();
     const path = location.pathname;
@@ -24,7 +27,7 @@ const Header = () => {
                 &nbsp; &nbsp;
                 <span>张雪峰</span>
                 &nbsp; &nbsp;
-                <Icon type="export" />
+                <Icon type="export" onClick={() => history.push('/login')} />
             </div>
         </div>
     );

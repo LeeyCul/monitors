@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, Icon } from 'antd';
 import menuConfig from './menuConfig';
+import { Layouts } from '@/types';
 
 const { SubMenu } = Menu;
 
@@ -10,7 +11,8 @@ function MenuNav() {
         <div>
             <Menu
                 theme="dark"
-                defaultSelectedKeys={['/amc/list']}
+                defaultOpenKeys={['/']}
+                defaultSelectedKeys={['/']}
                 mode="inline"
             >
                 {createMenu(menuConfig)}

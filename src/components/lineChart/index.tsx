@@ -4,11 +4,15 @@ import styles from './style.less';
 import { getOptions } from './options';
 import { Common } from '@/types';
 
-function index({ style, title }: Common.LineChart) {
+function index({ style, title, data }: Common.LineChart) {
     return (
         <div className={styles.line_chartBox}>
             <span className={styles.title}>{title}</span>
-            <ReactEcharts option={getOptions()} style={style} />
+            <ReactEcharts
+                option={getOptions(data)}
+                style={style}
+                notMerge={true}
+            />
         </div>
     );
 }

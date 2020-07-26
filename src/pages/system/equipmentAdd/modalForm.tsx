@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input } from 'antd';
 import { AuthManagement } from '@/types';
 
 const { TextArea } = Input;
 
 function AuthModal({
+    indexData,
     form,
     visible,
     confirmLoading,
@@ -12,7 +13,11 @@ function AuthModal({
     onCreate,
 }: AuthManagement.ModalFrom) {
     const { getFieldDecorator } = form;
-
+    useEffect(() => {
+        if (indexData) {
+            form.setFieldsValue(indexData);
+        }
+    }, [indexData]);
     return (
         <Modal
             title="添加指标"

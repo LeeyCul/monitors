@@ -23,6 +23,7 @@ declare namespace Common {
     interface LineChart {
         style?: React.CSSProperties;
         title: string;
+        data?: any[];
     }
 
     interface TableListCardPage {
@@ -41,6 +42,19 @@ declare namespace Common {
         queryName: string;
         handleQuery: (value: string) => void;
         add: () => void;
+    }
+
+    interface Columns {
+        title: string;
+        dataIndex: string;
+        key?: string;
+        other?: string;
+    }
+
+    interface CustomTables {
+        columns: Columns[];
+        data: any;
+        loading: boolean;
     }
 }
 
@@ -62,6 +76,7 @@ declare namespace AuthManagement {
         form: any;
         visible: boolean;
         confirmLoading?: boolean;
+        indexData?: any;
         // treeData: any[]
         onCancel: () => void;
         onCreate: (value: any) => void;
@@ -82,5 +97,14 @@ declare namespace EquipmentAdd {
 
     interface AddInex {
         dispatch: Dispatch;
+        location: any;
+    }
+}
+
+declare namespace IHistoryData {
+    interface IindexState {
+        dispatch: Dispatch;
+        list: any;
+        loading: boolean;
     }
 }

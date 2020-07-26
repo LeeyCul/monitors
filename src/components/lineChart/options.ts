@@ -1,11 +1,88 @@
-export const getOptions = () => {
+import { quotaName } from '@/assets/asssetsData';
+import moment from 'moment';
+import Item from 'antd/lib/list/Item';
+export const getOptions = (data: any) => {
+    let keyTitle = Object.keys(data).filter(Boolean);
+    const chartsTitle: any[] = [];
+    const ts = data.ts ? data.ts : [];
+    const times =
+        ts.length && ts.map((item: any) => moment(item.ts).format('mm:ss'));
+    const series =
+        keyTitle &&
+        keyTitle.length > 0 &&
+        keyTitle.map((item: any, key: number) => {
+            const colors: any = [
+                [
+                    '#fe9a8b',
+                    'rgba(137, 189, 27, 0.3)',
+                    'rgba(137, 189, 27, 0)',
+                    'rgb(137,189,27)',
+                    'rgba(137,189,2,0.27)',
+                ],
+                [
+                    '#9E87FF',
+                    'rgba(0, 136, 212, 0.3)',
+                    'rgba(0, 136, 212, 0)',
+                    'rgb(0,136,212)',
+                    'rgba(0,136,212,0.2)',
+                ],
+            ];
+
+            if (item !== 'ts') {
+                const chartsData = data[item];
+                chartsTitle.push(quotaName[item]);
+                return {
+                    name: quotaName[item],
+                    type: 'line',
+                    smooth: true,
+                    symbol: 'circle',
+                    symbolSize: 5,
+                    showSymbol: false,
+                    lineStyle: {
+                        color: colors[key][0],
+                    },
+                    areaStyle: {
+                        normal: {
+                            color: {
+                                type: 'linear',
+                                x: 0,
+                                y: 0,
+                                x2: 0,
+                                y2: 1,
+                                colorStops: [
+                                    {
+                                        offset: 0,
+                                        color: colors[key][1], // 0% 处的颜色
+                                    },
+                                    {
+                                        offset: 0.8,
+                                        color: colors[key][2], // 100% 处的颜色
+                                    },
+                                ],
+                                globalCoord: false, // 缺省为 false
+                                shadowColor: 'rgba(0, 0, 0, 0.1)',
+                                shadowBlur: 10,
+                            },
+                        },
+                    },
+                    itemStyle: {
+                        normal: {
+                            color: colors[key][3],
+                            borderColor: colors[key][4],
+                            borderWidth: 12,
+                        },
+                    },
+                    data: chartsData,
+                };
+            }
+        });
     return {
         backgroundColor: '#fff',
         legend: {
             icon: 'circle',
             itemWidth: 9,
             itemHeight: 9,
-            data: ['移动', '电信'],
+            data: chartsTitle,
             left: 0,
             top: 8,
         },
@@ -34,16 +111,7 @@ export const getOptions = () => {
                         color: '#999',
                     },
                 },
-                data: [
-                    '13:00',
-                    '13:05',
-                    '13:10',
-                    '13:15',
-                    '13:20',
-                    '13:25',
-                    '13:30',
-                    '13:35',
-                ],
+                data: times,
             },
         ],
         yAxis: [
@@ -71,93 +139,6 @@ export const getOptions = () => {
                 },
             },
         ],
-        series: [
-            {
-                name: '移动',
-                type: 'line',
-                smooth: true,
-                symbol: 'circle',
-                symbolSize: 5,
-                showSymbol: false,
-                lineStyle: {
-                    color: '#fe9a8b',
-                },
-                areaStyle: {
-                    normal: {
-                        color: {
-                            type: 'linear',
-                            x: 0,
-                            y: 0,
-                            x2: 0,
-                            y2: 1,
-                            colorStops: [
-                                {
-                                    offset: 0,
-                                    color: 'rgba(137, 189, 27, 0.3)', // 0% 处的颜色
-                                },
-                                {
-                                    offset: 0.8,
-                                    color: 'rgba(137, 189, 27, 0)', // 100% 处的颜色
-                                },
-                            ],
-                            globalCoord: false, // 缺省为 false
-                            shadowColor: 'rgba(0, 0, 0, 0.1)',
-                            shadowBlur: 10,
-                        },
-                    },
-                },
-                itemStyle: {
-                    normal: {
-                        color: 'rgb(137,189,27)',
-                        borderColor: 'rgba(137,189,2,0.27)',
-                        borderWidth: 12,
-                    },
-                },
-                data: [220, 182, 191, 134, 150, 120, 110, 125],
-            },
-            {
-                name: '电信',
-                type: 'line',
-                smooth: true,
-                symbol: 'circle',
-                symbolSize: 6,
-                showSymbol: false,
-                lineStyle: {
-                    color: '#9E87FF',
-                },
-                areaStyle: {
-                    normal: {
-                        color: {
-                            type: 'linear',
-                            x: 0,
-                            y: 0,
-                            x2: 0,
-                            y2: 1,
-                            colorStops: [
-                                {
-                                    offset: 0,
-                                    color: 'rgba(0, 136, 212, 0.3)', // 0% 处的颜色
-                                },
-                                {
-                                    offset: 0.8,
-                                    color: 'rgba(0, 136, 212, 0)', // 100% 处的颜色
-                                },
-                            ],
-                            globalCoord: false, // 缺省为 false
-                            shadowColor: 'rgba(0, 0, 0, 0.1)',
-                            shadowBlur: 10,
-                        },
-                    },
-                },
-                itemStyle: {
-                    normal: {
-                        color: 'rgb(0,136,212)',
-                        borderColor: 'rgba(0,136,212,0.2)',
-                        borderWidth: 12,
-                    },
-                },
-                data: [120, 110, 125, 145, 122, 165, 122, 220],
-            },
-        ],
+        series: series,
     };
 };

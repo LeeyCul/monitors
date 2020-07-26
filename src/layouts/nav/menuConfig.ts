@@ -20,16 +20,16 @@ export default [
         icon: 'setting',
         children: [
             {
+                name: '设备管理',
+                path: '/equipment',
+            },
+            {
                 name: '权限管理',
                 path: '/auth',
             },
             {
                 name: '人员管理',
                 path: '/personnel',
-            },
-            {
-                name: '设备管理',
-                path: '/equipment',
             },
         ],
     },

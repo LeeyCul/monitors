@@ -1,26 +1,31 @@
 import React, { useState } from 'react';
 import { Divider } from 'antd';
 import TableListCardPage from '@/components/tableListCardPage';
-import ModalForm from './modalForm'
+import ModalForm from './modalForm';
 
 function index() {
     const [visible, setVisible] = useState<Boolean>(false);
-    const [confirmLoading, setConfirmLoading] = useState<boolean>(false)
+    const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
     const columns = [
         {
-            title: '姓名',
+            title: '用户名',
             dataIndex: 'name',
             key: 'name',
         },
         {
-            title: '年龄',
-            dataIndex: 'age',
-            key: 'age',
+            title: '绑定角色',
+            dataIndex: 'jiaose',
+            key: 'jiaose',
         },
         {
-            title: '住址',
-            dataIndex: 'address',
-            key: 'address',
+            title: '手机号码',
+            dataIndex: 'ip',
+            key: 'ip',
+        },
+        {
+            title: '真实姓名',
+            dataIndex: 'rename',
+            key: 'rename',
         },
         {
             title: '操作',
@@ -45,18 +50,18 @@ function index() {
 
     const dataSource = [
         {
-            key: '1',
-            name: '胡彦斌',
-            age: 32,
-            address: '西湖区湖底公园1号',
-            id: '1'
+            name: '测试1',
+            jiaose: '测试1',
+            ip: 18483226955,
+            rename: '李先生',
+            id: '1',
         },
         {
-            key: '2',
-            name: '胡彦祖',
-            age: 42,
-            address: '西湖区湖底公园1号',
-            id: '2'
+            name: '测试2',
+            jiaose: '测试2',
+            ip: 18483226995,
+            rename: '李先生',
+            id: '1',
         },
     ];
 
@@ -73,11 +78,9 @@ function index() {
     }
 
     const handleCreate = (value: any) => {
-
         console.log('object :>> ', value);
-        setVisible(false)
-
-    }
+        setVisible(false);
+    };
 
     return (
         <div>

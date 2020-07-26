@@ -9,11 +9,15 @@ import { quotaName } from '@/assets/asssetsData';
 import styles from './style.less';
 import { EquipmentAdd } from '@/types';
 
-function index({ dispatch }: EquipmentAdd.AddInex) {
+function index({ dispatch, location }: EquipmentAdd.AddInex) {
     const [visible, setVisible] = useState<boolean>(false);
+    const [title, setTitle] = useState<string>('新增设备');
     const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
     const [data, setData] = useState<any>([]);
     const [trem, setTrem] = useState<any>();
+    const [indexData, setIndexData] = useState<any>();
+    const [editOrAdd, setEditOrAdd] = useState<string>('');
+    const [editKey, setEditKey] = useState<any>('');
 
     const getFormValue: any = useRef();
 
@@ -44,12 +48,19 @@ function index({ dispatch }: EquipmentAdd.AddInex) {
             render: (item: any, record: any) => {
                 return (
                     <span>
-                        <span className={styles.handle}>编辑</span>
+                        <span
+                            className={styles.handle}
+                            onClick={() => {
+                                handleEdit(record);
+                            }}
+                        >
+                            编辑
+                        </span>
                         <Divider type="vertical" />
                         <span
                             className={styles.handle}
                             onClick={() => {
-                                handleDel(record.gateway);
+                                handleDel(record.target);
                             }}
                         >
                             删除
@@ -61,20 +72,52 @@ function index({ dispatch }: EquipmentAdd.AddInex) {
     ];
 
     useEffect(() => {
-        // getFormValue.current.formFieldsValue({ name: 11 });
-    });
+        const { state } = location;
+        if (state) {
+            const { name, additionalInfo, label } = state;
+            console.log('state :>> ', state);
+            const {
+                number,
+                manufacturer,
+                createdTime,
+                description,
+            } = additionalInfo;
+            let time = moment(createdTime);
+            const formValu = {
+                name,
+                number,
+                manufacturer,
+                label,
+                createdTime: time,
+            };
+            //回填数据
+            setTitle('编辑设备');
+            setData(description);
+            getFormValue.current.formFieldsValue(formValu);
+        }
+    }, []);
 
     const handleCreate = (value: any) => {
         const objVal = Object.assign({}, value, { target: trem });
-        setData([...data, objVal]);
+        if (editOrAdd === 'edit') {
+            const newData = data.filter((item: any) => editKey !== item.target);
+            setData([...newData, objVal]);
+        } else {
+            setData([...data, objVal]);
+        }
         setVisible(false);
     };
 
     function handleDel(recordId: string) {
-        const dataSource = data.filter(
-            (item: any) => item.gateway !== recordId,
-        );
+        const dataSource = data.filter((item: any) => item.target !== recordId);
         setData(dataSource);
+    }
+
+    function handleEdit(value: any) {
+        setEditKey(value.target);
+        setEditOrAdd('edit');
+        setIndexData(value);
+        setVisible(true);
     }
 
     function handleSubmit() {
@@ -87,19 +130,23 @@ function index({ dispatch }: EquipmentAdd.AddInex) {
                 label: '测试',
                 additionalInfo: {
                     gateway: false,
-                    description: '',
-
-                    // description: data,
-                    // number,
-                    // manufacturer,
-                    // createdTime: moment(createdTime).unix(),
+                    description: data,
+                    number,
+                    manufacturer,
+                    // createdTime: moment().unix(),
+                    createdTime,
                 },
             };
             if (data.length) {
-                dispatch({
-                    type: 'equipment/addEquipment',
-                    payload: resultVal,
-                });
+                const { state } = location;
+                if (state) {
+                    message.success('修改成功');
+                } else {
+                    dispatch({
+                        type: 'equipment/addEquipment',
+                        payload: resultVal,
+                    });
+                }
             } else {
                 message.warning('指标为必填项，请添加指标');
             }
@@ -115,7 +162,7 @@ function index({ dispatch }: EquipmentAdd.AddInex) {
                         history.push('/equipment');
                     }}
                 />
-                <h4>新增设备</h4>
+                <h4>{title}</h4>
             </div>
             <FilterFrom
                 onCreate={handleSubmit}
@@ -136,6 +183,7 @@ function index({ dispatch }: EquipmentAdd.AddInex) {
                     showModa={(trem: any) => {
                         setTrem(trem);
                         setVisible(true);
+                        setEditOrAdd('add');
                     }}
                 />
             </div>
@@ -156,9 +204,13 @@ function index({ dispatch }: EquipmentAdd.AddInex) {
                 </Button>
             </div>
             <ModalForm
+                indexData={indexData}
                 visible={visible}
                 confirmLoading={confirmLoading}
-                onCancel={() => setVisible(false)}
+                onCancel={() => {
+                    setVisible(false);
+                    setIndexData('');
+                }}
                 onCreate={handleCreate}
             />
         </div>

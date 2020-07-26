@@ -1,5 +1,6 @@
 import React from 'react';
 import { DatePicker, Form, Button, Radio } from 'antd';
+import { connect } from 'umi';
 import moment from 'moment';
 import locale from 'antd/lib/date-picker/locale/zh_CN';
 import 'moment/locale/zh-cn';
@@ -8,19 +9,19 @@ moment.locale('zh-cn');
 const { RangePicker } = DatePicker;
 
 function Filter(props: any) {
-    const { onQuery, form } = props
+    const { onQuery, form, dispatch } = props;
     const { getFieldDecorator, resetFields } = form;
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         props.form.validateFields((err: any, values: any) => {
             if (!err) {
-                const timeArr = values.time && values.time
-                let startTs = values.time && moment(timeArr[0]).unix()
-                let endTs = values.time && moment(timeArr[1]).unix()
-                let result = Object.assign({}, values, { startTs, endTs })
-                delete result.time
-                onQuery(result)
+                const timeArr = values.time && values.time;
+                let startTs = values.time && moment(timeArr[0]).unix() * 1000;
+                let endTs = values.time && moment(timeArr[1]).unix() * 1000;
+                let result = Object.assign({}, values, { startTs, endTs });
+                delete result.time;
+                onQuery(result);
             }
         });
     }
@@ -49,7 +50,7 @@ function Filter(props: any) {
                         <Radio.Group>
                             <Radio.Button value="m">分钟数据</Radio.Button>
                             <Radio.Button value="h">小时数据</Radio.Button>
-                            {/* <Radio.Button value="">日数据</Radio.Button> */}
+                            <Radio.Button value="d">日数据</Radio.Button>
                         </Radio.Group>,
                     )}
                 </Form.Item>
@@ -61,6 +62,7 @@ function Filter(props: any) {
                 <Form.Item>
                     <Button
                         onClick={() => {
+                            dispatch({ type: 'historyData/getHistoryData' });
                             resetFields();
                         }}
                     >
@@ -74,4 +76,4 @@ function Filter(props: any) {
 
 const FilterForm: any = Form.create()(Filter);
 
-export default FilterForm;
+export default connect()(FilterForm);

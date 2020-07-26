@@ -43,6 +43,7 @@ const equipment: EquipmentModels = {
     effects: {
         *addEquipment({ payload }, { call }) {
             const data = yield call(apis.addEquipments, payload);
+            message.success('新增成功');
         },
         *getEquipmentList({ payload }, { call, put }) {
             const data = yield call(apis.getEquipmentList, {

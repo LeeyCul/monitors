@@ -1,5 +1,6 @@
 import { Reducer, Effect, Subscription } from 'umi';
 import * as apis from './service';
+import { listenWebSocket } from './websocket';
 
 interface RealTimeModel {
     namespace: 'realtime';
@@ -32,21 +33,12 @@ const realtimeModel: RealTimeModel = {
     },
     effects: {
         *getList(action, { call, put }) {
-            const data = yield call(apis.getList);
-            yield put({
-                type: 'getData',
-                payload: data,
-            });
+            // const data = yield call(listenWebSocket);
+            // console.log('datas222', data);
         },
     },
     reducers: {
-        getData(state, { payload }) {
-            const { data } = payload;
-            return {
-                ...state,
-                dataSource: data,
-            };
-        },
+        getData(state, { payload }) {},
     },
 };
 

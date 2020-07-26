@@ -1,28 +1,28 @@
 import React, { useState, useRef } from 'react';
 import { Divider, Modal } from 'antd';
 import TableListCardPage from '@/components/tableListCardPage';
-import CollectionCreateForm from './modalFrom'
+import CollectionCreateForm from './modalFrom';
 
 function index() {
     const getFormValue = useRef();
     const [visible, setVisible] = useState<boolean>(false);
-    const [a, setA] = useState<any>()
-    const [confirmLoading, setConfirmLoading] = useState<boolean>(false)
+    const [a, setA] = useState<any>();
+    const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
     const columns = [
         {
-            title: '姓名',
+            title: '角色ID',
+            dataIndex: 'id',
+            key: 'id',
+        },
+        {
+            title: '角色名称',
             dataIndex: 'name',
             key: 'name',
         },
         {
-            title: '年龄',
-            dataIndex: 'age',
-            key: 'age',
-        },
-        {
-            title: '住址',
-            dataIndex: 'address',
-            key: 'address',
+            title: '创建时间',
+            dataIndex: 'time',
+            key: 'time',
         },
         {
             title: '操作',
@@ -49,15 +49,17 @@ function index() {
     const dataSource = [
         {
             key: '1',
-            name: '胡彦斌',
+            name: '测试1',
             age: 32,
-            address: '西湖区湖底公园1号',
+            time: '2020-7.26',
+            id: '1',
         },
         {
             key: '2',
-            name: '胡彦祖',
+            name: '测试2',
             age: 42,
-            address: '西湖区湖底公园1号',
+            time: '2020-7.26',
+            id: '2',
         },
     ];
 
@@ -76,11 +78,9 @@ function index() {
     const handleCreate = (value: any) => {
         if (value) {
             console.log('object :>> ', value);
-            setVisible(false)
+            setVisible(false);
         }
-    }
-
-
+    };
 
     return (
         <div>
@@ -101,8 +101,6 @@ function index() {
                 onCancel={() => setVisible(false)}
                 onCreate={handleCreate}
             />
-
-
         </div>
     );
 }
@@ -110,8 +108,8 @@ function index() {
 const styles = {
     action: {
         color: '#53A8E2',
-        cursor: 'pointer'
-    }
-}
+        cursor: 'pointer',
+    },
+};
 
 export default index;
