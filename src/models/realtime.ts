@@ -1,6 +1,5 @@
 import { Reducer, Effect, Subscription } from 'umi';
 import * as apis from './service';
-import { listenWebSocket } from './websocket';
 
 interface RealTimeModel {
     namespace: 'realtime';
@@ -19,14 +18,14 @@ interface RealTimeModel {
 const realtimeModel: RealTimeModel = {
     namespace: 'realtime',
     state: {
-        name: '我补助到啊',
+        name: '',
         dataSource: [],
     },
     subscriptions: {
         setup({ dispatch, history }) {
             return history.listen(({ pathname }) => {
                 if (pathname === '/') {
-                    dispatch({ type: 'getList' });
+                    dispatch({ type: 'equipment/getEquipmentList' });
                 }
             });
         },
@@ -34,7 +33,6 @@ const realtimeModel: RealTimeModel = {
     effects: {
         *getList(action, { call, put }) {
             // const data = yield call(listenWebSocket);
-            // console.log('datas222', data);
         },
     },
     reducers: {

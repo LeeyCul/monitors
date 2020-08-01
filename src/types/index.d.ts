@@ -1,5 +1,4 @@
 import { Dispatch } from 'umi';
-import { ColumnProps } from 'antd/lib/table/interface';
 
 declare namespace Layouts {
     interface IProps {
@@ -35,7 +34,7 @@ declare namespace Common {
         queryName: string;
         handleQuery: (value: string) => void;
         add: () => void;
-        lotSizeDel: (value: any[]) => void;
+        lotSizeDel?: (value: any[]) => void;
     }
 
     interface TableFilter {
@@ -73,13 +72,17 @@ declare namespace Realtime {
 
 declare namespace AuthManagement {
     interface ModalFrom {
+        title?: string;
+        editCheckList?: any[];
         form: any;
         visible: boolean;
         confirmLoading?: boolean;
         indexData?: any;
-        // treeData: any[]
+        resourceList?: any[];
+        isRequired?: boolean;
+        roleList?: any[];
         onCancel: () => void;
-        onCreate: (value: any) => void;
+        onCreate: (value?: any) => void;
     }
 }
 
@@ -99,6 +102,20 @@ declare namespace EquipmentAdd {
         dispatch: Dispatch;
         location: any;
     }
+
+    interface ModalFrom {
+        title?: string;
+        form: any;
+        visible: boolean;
+        onCancel: () => void;
+        onCreate: () => void;
+    }
+
+    interface ModalFromVal {
+        min: any;
+        mxa: any;
+        description: string;
+    }
 }
 
 declare namespace IHistoryData {
@@ -106,5 +123,6 @@ declare namespace IHistoryData {
         dispatch: Dispatch;
         list: any;
         loading: boolean;
+        deviceData: any[];
     }
 }

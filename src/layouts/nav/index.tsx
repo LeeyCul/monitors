@@ -5,6 +5,11 @@ import menuConfig from './menuConfig';
 import { Layouts } from '@/types';
 
 const { SubMenu } = Menu;
+const soure = [3, 4];
+const a = {
+    1: [3, 4],
+    2: [5, 6, 7],
+};
 
 function MenuNav() {
     return (

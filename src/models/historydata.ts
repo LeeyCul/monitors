@@ -34,13 +34,14 @@ const history: Ihistory = {
         setup({ dispatch, history }) {
             return history.listen(({ pathname }) => {
                 if (pathname === '/history') {
-                    dispatch({ type: 'getHistoryData' });
+                    dispatch({ type: 'equipment/getEquipmentList' });
                 }
             });
         },
     },
     effects: {
-        *getHistoryData({ payload: condition }, { call, put }) {
+        *getHistoryData({ payload }, { call, put }) {
+            const { condition, id } = payload;
             const keys = condition ? joint(condition.keys) : joint();
             let endTs = new Date().getTime();
             //默认显示最近30分钟数据
@@ -51,7 +52,10 @@ const history: Ihistory = {
             } else {
                 resultObj = { startTs, endTs, keys: keys };
             }
-            const data = yield call(apis.getHistoryData, resultObj);
+            const data = yield call(apis.getHistoryData, {
+                value: resultObj,
+                id,
+            });
             yield put({ type: 'getHistoryList', payload: data });
         },
     },

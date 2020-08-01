@@ -1,6 +1,5 @@
 import { extend } from 'umi-request';
-import { routerRedux } from 'dva/router';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import { history } from 'umi';
 
 const codeMessage: any = {
@@ -9,7 +8,7 @@ const codeMessage: any = {
     202: '一个请求已经进入后台排队（异步任务）。',
     204: '删除数据成功。',
     400: '发出的请求有错误，服务器没有进行新建或修改数据的操作。',
-    401: '用户密码错误或登录实效',
+    401: '用户密码错误',
     403: '用户得到授权，但是访问是被禁止的。',
     404: '发出的请求针对的是不存在的记录，服务器没有进行操作。',
     406: '请求的格式不可得。',
@@ -26,15 +25,30 @@ const codeMessage: any = {
  */
 const errorHandler = (error: any) => {
     const { response } = error;
-
     if (response && response.status) {
         const errorText: any =
             codeMessage[response.status] || response.statusText;
         const { status, url } = response;
         if (status === 401) {
-            routerRedux.push('/login');
+            const urlAddress = url.split('/').pop();
+            if (urlAddress === 'login') {
+                message.error(errorText);
+            } else {
+                function error() {
+                    Modal.error({
+                        title: '提示',
+                        content: '当前登录已过期，请重新登陆！',
+                        okText: '确定',
+                        onOk() {
+                            history.push('/login');
+                        },
+                    });
+                }
+                error();
+            }
+        } else {
+            message.error(errorText);
         }
-        message.error(errorText);
     }
 
     return response;
@@ -42,14 +56,14 @@ const errorHandler = (error: any) => {
 
 const request = extend({
     errorHandler,
-    prefix: 'http://hwy.feelbang.com:8080',
-    credentials: 'include', // 默认请求是否带上cookie
+    prefix: 'http://hwy.feelbang.com:9090',
+    // credentials: 'include', // 默认请求是否带上cookie
 });
 /**
  * request拦截器, 改变url 或 options.
  */
 request.interceptors.request.use((url: string, options: any) => {
-    let token = localStorage.getItem('token');
+    let token = sessionStorage.getItem('token');
     if (!token) {
         history.push('/login');
     }

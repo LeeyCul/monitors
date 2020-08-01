@@ -13,14 +13,14 @@ const TableListCardPage: FC<Common.TableListCardPage> = ({
     handleQuery,
     add,
     lotSizeDel,
-    loading
+    loading,
 }) => {
     const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
 
     const rowSelection = {
         selectedRowKeys,
         onChange: (selectedRowKeys: any) => {
-            setSelectedRowKeys(selectedRowKeys)
+            setSelectedRowKeys(selectedRowKeys);
         },
     };
 
@@ -48,7 +48,10 @@ const TableListCardPage: FC<Common.TableListCardPage> = ({
                         </span>
                         <label
                             className={styles.button}
-                            onClick={() => lotSizeDel(selectedRowKeys)}
+                            onClick={() => {
+                                lotSizeDel && lotSizeDel(selectedRowKeys);
+                                setSelectedRowKeys([]);
+                            }}
                         >
                             批量删除
                         </label>

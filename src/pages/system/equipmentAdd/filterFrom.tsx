@@ -1,4 +1,4 @@
-import React, { useImperativeHandle, useRef, forwardRef } from 'react';
+import React, { useImperativeHandle, forwardRef } from 'react';
 import { Form, Input, DatePicker, Row, Col } from 'antd';
 
 const { TextArea } = Input;
@@ -6,18 +6,17 @@ const { TextArea } = Input;
 function FilterFrom(props: any, ref: any) {
     const { form } = props;
     const { getFieldDecorator } = form;
-
-    const formRef = useRef();
     useImperativeHandle(ref, () => ({
         formFields: props.form.validateFields,
         formFieldsValue: (value: any) => {
             props.form.setFieldsValue(value);
         },
+        resetForm: form.resetFields,
     }));
     const formItemLayout = {
         labelCol: {
-            xs: { span: 5 },
-            sm: { span: 5 },
+            xs: { span: 8 },
+            sm: { span: 8 },
         },
         wrapperCol: {
             xs: { span: 20 },
@@ -41,7 +40,7 @@ function FilterFrom(props: any, ref: any) {
             <Form {...formItemLayout}>
                 <Row gutter={18}>
                     <Col xl={6} md={12} sm={24}>
-                        <Form.Item label="设备名称">
+                        <Form.Item label="设备名称" hasFeedback>
                             {getFieldDecorator('name', {
                                 rules: [
                                     {
@@ -58,7 +57,7 @@ function FilterFrom(props: any, ref: any) {
                         </Form.Item>
                     </Col>
                     <Col xl={6} md={12} sm={24}>
-                        <Form.Item label="设备编号">
+                        <Form.Item label="设备编号" hasFeedback>
                             {getFieldDecorator('number', {
                                 rules: [
                                     {
@@ -70,14 +69,26 @@ function FilterFrom(props: any, ref: any) {
                         </Form.Item>
                     </Col>
                     <Col xl={6} md={12} sm={24}>
-                        <Form.Item label="生产厂商">
+                        <Form.Item label="MNID" hasFeedback>
+                            {getFieldDecorator('mn', {
+                                rules: [
+                                    {
+                                        required: true,
+                                        message: '请输入mnid号',
+                                    },
+                                ],
+                            })(<Input placeholder="请输入mnid号" />)}
+                        </Form.Item>
+                    </Col>
+                    <Col xl={6} md={12} sm={24}>
+                        <Form.Item label="生产厂商" hasFeedback>
                             {getFieldDecorator('manufacturer')(
                                 <Input placeholder="请输入生产厂商" />,
                             )}
                         </Form.Item>
                     </Col>
                     <Col xl={6} md={12} sm={24}>
-                        <Form.Item label="上线时间">
+                        <Form.Item label="上线时间" hasFeedback>
                             {getFieldDecorator('createdTime')(
                                 <DatePicker
                                     style={{ width: '100%' }}
@@ -87,8 +98,12 @@ function FilterFrom(props: any, ref: any) {
                         </Form.Item>
                     </Col>
                     <Col xl={17} md={12} sm={24}>
-                        <Form.Item label="备注信息" {...formItemLayouts}>
-                            {getFieldDecorator('label')(
+                        <Form.Item
+                            label="备注信息"
+                            {...formItemLayouts}
+                            hasFeedback
+                        >
+                            {getFieldDecorator('description')(
                                 <TextArea
                                     rows={2}
                                     placeholder="请输入备注信息"

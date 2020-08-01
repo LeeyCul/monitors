@@ -12,14 +12,14 @@ import { EquipmentAdd } from '@/types';
 function index({ dispatch, location }: EquipmentAdd.AddInex) {
     const [visible, setVisible] = useState<boolean>(false);
     const [title, setTitle] = useState<string>('新增设备');
-    const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
     const [data, setData] = useState<any>([]);
     const [trem, setTrem] = useState<any>();
-    const [indexData, setIndexData] = useState<any>();
-    const [editOrAdd, setEditOrAdd] = useState<string>('');
+    const [modalEditOrAdd, setModalEditOrAdd] = useState<string>('');
     const [editKey, setEditKey] = useState<any>('');
+    const [editInfo, setEditInfo] = useState<any>({});
 
-    const getFormValue: any = useRef();
+    const filterFormRef: any = useRef();
+    const modalFormRef: any = useRef();
 
     const columns: any = [
         {
@@ -75,37 +75,57 @@ function index({ dispatch, location }: EquipmentAdd.AddInex) {
         const { state } = location;
         if (state) {
             const { name, additionalInfo, label } = state;
-            console.log('state :>> ', state);
             const {
                 number,
                 manufacturer,
                 createdTime,
-                description,
+                data,
+                mn,
             } = additionalInfo;
             let time = moment(createdTime);
             const formValu = {
                 name,
                 number,
+                mn,
                 manufacturer,
-                label,
+                description: label,
                 createdTime: time,
             };
             //回填数据
+            setEditInfo(state);
             setTitle('编辑设备');
-            setData(description);
-            getFormValue.current.formFieldsValue(formValu);
+            setData(data || []);
+            filterFormRef.current.formFieldsValue(formValu);
         }
     }, []);
 
-    const handleCreate = (value: any) => {
-        const objVal = Object.assign({}, value, { target: trem });
-        if (editOrAdd === 'edit') {
-            const newData = data.filter((item: any) => editKey !== item.target);
-            setData([...newData, objVal]);
-        } else {
-            setData([...data, objVal]);
-        }
-        setVisible(false);
+    const handleQuotaSubmit = () => {
+        const { getVal, resetForm } = modalFormRef.current;
+        getVal((err: any, value: EquipmentAdd.ModalFromVal) => {
+            if (!err) {
+                const addVal = Object.assign({}, value, { target: trem });
+                if (modalEditOrAdd === 'edit') {
+                    const editVal = Object.assign({}, value, {
+                        target: editKey,
+                    });
+                    const newData =
+                        data.length &&
+                        data.filter((item: any) => editKey !== item.target);
+                    setData([...newData, editVal]);
+                } else {
+                    const len =
+                        data.length &&
+                        data.filter((item: any) => trem === item.target).length;
+                    if (len) {
+                        message.info('相同的指标只能存在一个！');
+                    } else {
+                        setData([...data, addVal]);
+                    }
+                }
+                resetForm();
+                setVisible(false);
+            }
+        });
     };
 
     function handleDel(recordId: string) {
@@ -114,41 +134,54 @@ function index({ dispatch, location }: EquipmentAdd.AddInex) {
     }
 
     function handleEdit(value: any) {
+        const { setVal } = modalFormRef.current;
         setEditKey(value.target);
-        setEditOrAdd('edit');
-        setIndexData(value);
+        setModalEditOrAdd('edit');
+        setVal(value);
         setVisible(true);
     }
 
     function handleSubmit() {
-        const { formFields } = getFormValue.current;
-        formFields().then((value: any) => {
-            const { name, number, manufacturer, createdTime, label } = value;
-            const resultVal = {
-                name,
-                type: 'test',
-                label: '测试',
-                additionalInfo: {
-                    gateway: false,
-                    description: data,
+        const { formFields, resetForm } = filterFormRef.current;
+        formFields((err: any, value: any) => {
+            if (!err) {
+                const {
+                    name,
                     number,
                     manufacturer,
-                    // createdTime: moment().unix(),
                     createdTime,
-                },
-            };
-            if (data.length) {
-                const { state } = location;
-                if (state) {
-                    message.success('修改成功');
-                } else {
+                    mn,
+                    description,
+                } = value;
+                const addVal = {
+                    name,
+                    type: 'Test',
+                    label: description,
+                    additionalInfo: {
+                        gateway: false,
+                        description: '',
+                        number,
+                        mn,
+                        manufacturer,
+                        createdTime,
+                        data,
+                    },
+                };
+                const editVal = Object.assign({}, editInfo, addVal);
+                // 判断指标信息是否为空
+                if (data.length) {
+                    const { state } = location;
+                    const type = state ? false : true;
+                    const objVal = state ? editVal : addVal;
                     dispatch({
                         type: 'equipment/addEquipment',
-                        payload: resultVal,
+                        payload: { value: objVal, type: type },
                     });
+                    resetForm();
+                    setData([]);
+                } else {
+                    message.warning('指标为必填项，请添加指标');
                 }
-            } else {
-                message.warning('指标为必填项，请添加指标');
             }
         });
     }
@@ -166,7 +199,7 @@ function index({ dispatch, location }: EquipmentAdd.AddInex) {
             </div>
             <FilterFrom
                 onCreate={handleSubmit}
-                wrappedComponentRef={getFormValue}
+                wrappedComponentRef={filterFormRef}
             />
             <div className={styles.table_conainer}>
                 <div className={styles.table_style}>
@@ -183,7 +216,7 @@ function index({ dispatch, location }: EquipmentAdd.AddInex) {
                     showModa={(trem: any) => {
                         setTrem(trem);
                         setVisible(true);
-                        setEditOrAdd('add');
+                        setModalEditOrAdd('add');
                     }}
                 />
             </div>
@@ -204,14 +237,15 @@ function index({ dispatch, location }: EquipmentAdd.AddInex) {
                 </Button>
             </div>
             <ModalForm
-                indexData={indexData}
+                title={modalEditOrAdd === 'edit' ? '编辑指标' : null}
                 visible={visible}
-                confirmLoading={confirmLoading}
                 onCancel={() => {
+                    const { resetForm } = modalFormRef.current;
+                    resetForm();
                     setVisible(false);
-                    setIndexData('');
                 }}
-                onCreate={handleCreate}
+                onCreate={handleQuotaSubmit}
+                wrappedComponentRef={modalFormRef}
             />
         </div>
     );

@@ -16,3 +16,18 @@ export function groupBy(array: any[] = [], page: number) {
     }
     return result;
 }
+
+export function handleData(arr: any[]) {
+    const isArr = Array.isArray(arr);
+    const result: any[] = isArr
+        ? arr.map((item: any) => {
+              const { children, name, id } = item;
+              return {
+                  title: name,
+                  key: id,
+                  children: handleData(children),
+              };
+          })
+        : [];
+    return result;
+}

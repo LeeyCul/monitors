@@ -14,6 +14,7 @@ const Header = () => {
     };
     const location = useLocation();
     const path = location.pathname;
+    const user = sessionStorage.getItem('user');
     return (
         <div className={style.haader_conainer}>
             <div className={style.left}>
@@ -25,7 +26,7 @@ const Header = () => {
             <div className={style.right}>
                 <Avatar style={{ backgroundColor: '#87d068' }} icon="user" />
                 &nbsp; &nbsp;
-                <span>张雪峰</span>
+                <span>{user}</span>
                 &nbsp; &nbsp;
                 <Icon type="export" onClick={() => history.push('/login')} />
             </div>

@@ -1,13 +1,17 @@
 import React, { useState, useRef } from 'react';
-import { Divider, Modal } from 'antd';
+import { Divider, message } from 'antd';
+import { connect } from 'umi';
 import TableListCardPage from '@/components/tableListCardPage';
 import CollectionCreateForm from './modalFrom';
+import moment from 'moment';
 
-function index() {
-    const getFormValue = useRef();
+function index({ data, resourceList, resource, dispatch, loading }: any) {
+    const modalFormRef: any = useRef();
     const [visible, setVisible] = useState<boolean>(false);
-    const [a, setA] = useState<any>();
+    const [editOrAdd, setEditOrAdd] = useState<string>('');
     const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
+    const [editId, setEditId] = useState<number | string | null>(null);
+    const { list, pager } = data;
     const columns = [
         {
             title: '角色ID',
@@ -21,21 +25,30 @@ function index() {
         },
         {
             title: '创建时间',
-            dataIndex: 'time',
-            key: 'time',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            render: (item: any) => (
+                <span>{moment(item).format('YYYY-MM-DD')}</span>
+            ),
         },
         {
             title: '操作',
             width: 200,
+            align: 'center',
             render: (record: any) => {
                 return (
                     <span>
-                        <span style={styles.action}>编辑</span>
+                        <span
+                            style={styles.action}
+                            onClick={() => handleEdit(record)}
+                        >
+                            编辑
+                        </span>
                         <Divider type="vertical" />
                         <span
                             style={styles.action}
                             onClick={() => {
-                                handleSigleDel(record);
+                                handleSigleDel(record.id);
                             }}
                         >
                             删除
@@ -46,60 +59,88 @@ function index() {
         },
     ];
 
-    const dataSource = [
-        {
-            key: '1',
-            name: '测试1',
-            age: 32,
-            time: '2020-7.26',
-            id: '1',
-        },
-        {
-            key: '2',
-            name: '测试2',
-            age: 42,
-            time: '2020-7.26',
-            id: '2',
-        },
-    ];
+    function handleEdit(record: any) {
+        const { setVal } = modalFormRef.current;
+        const { resource, name, id } = record;
+        setVal({ name });
+        setVisible(true);
+        setEditOrAdd('edit');
+        setEditId(id);
+        dispatch({ type: 'auth/setRoleCheckList', payload: resource });
+    }
 
     function handleQuery(keyWords: string) {
         console.log('keyWords', keyWords);
     }
 
-    function lotSizeDel(value: any[]) {
-        console.log(value);
+    function handleSigleDel(id: number) {
+        dispatch({ type: 'auth/delRole', payload: id });
     }
 
-    function handleSigleDel(record: any) {
-        console.log('va', record);
-    }
+    const handleCreate = () => {
+        const { getVal, resetForm } = modalFormRef.current;
 
-    const handleCreate = (value: any) => {
-        if (value) {
-            console.log('object :>> ', value);
-            setVisible(false);
-        }
+        getVal((err: any, values: any) => {
+            if (!err) {
+                let addVal = Object.assign({}, values, {
+                    resource: resource.map(Number),
+                });
+                let editVal = Object.assign({}, addVal, { id: editId });
+                if (editOrAdd === 'add') {
+                    // 判断权限是否为空
+                    if (!resource.length) {
+                        message.warning('权限列表不能为空');
+                    } else {
+                        dispatch({ type: 'auth/addRole', payload: addVal });
+                        // 重置表单
+                        resetForm();
+                        dispatch({
+                            type: 'auth/setRoleCheckList',
+                            payload: [],
+                        });
+                        !confirmLoading && setVisible(false);
+                    }
+                } else {
+                    dispatch({ type: 'auth/updateRole', payload: editVal });
+                    // 重置表单
+                    resetForm();
+                    dispatch({
+                        type: 'auth/setRoleCheckList',
+                        payload: [],
+                    });
+                    !confirmLoading && setVisible(false);
+                }
+            }
+        });
     };
 
     return (
         <div>
             <TableListCardPage
+                loading={loading}
                 columns={columns}
-                dataSource={dataSource}
+                dataSource={list}
                 title="权限管理"
                 queryName="人员名称"
                 handleQuery={handleQuery}
-                add={() => setVisible(true)}
-                lotSizeDel={lotSizeDel}
+                add={() => {
+                    setVisible(true);
+                    setEditOrAdd('add');
+                }}
             />
 
             <CollectionCreateForm
-                wrappedComponentRef={getFormValue}
+                wrappedComponentRef={modalFormRef}
                 visible={visible}
                 confirmLoading={confirmLoading}
-                onCancel={() => setVisible(false)}
+                onCancel={() => {
+                    const { resetForm } = modalFormRef.current;
+                    resetForm();
+                    dispatch({ type: 'auth/setRoleCheckList', payload: [] });
+                    setVisible(false);
+                }}
                 onCreate={handleCreate}
+                resourceList={resourceList}
             />
         </div>
     );
@@ -112,4 +153,14 @@ const styles = {
     },
 };
 
-export default index;
+const mapStateToProps = ({ auth, loading }: any) => {
+    return {
+        data: auth.data,
+        resourceList: auth.resourceList,
+        resource: auth.roleCheckList,
+        loading: loading.effects['auth/getRoleList'],
+        confirmLoading: loading.effects['auth/getRoleList'],
+    };
+};
+
+export default connect(mapStateToProps)(index);

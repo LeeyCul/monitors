@@ -1,6 +1,6 @@
 import React, { memo, useEffect } from 'react';
 import { Layout } from 'antd';
-import { useHistory } from 'umi'
+import { useHistory } from 'umi';
 import Logo from './logo';
 import MenuNav from './nav';
 import HeaderView from './header';
@@ -10,13 +10,13 @@ import { Layouts } from '@/types';
 const { Header, Content, Footer, Sider } = Layout;
 
 const BasicLayout: React.FC<Layouts.IProps> = ({ children }) => {
-    const history = useHistory()
+    const history = useHistory();
     useEffect(() => {
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         if (!token) {
             history.replace('/login');
         }
-    }, [])
+    }, []);
     return (
         <div className={styles.layout_conainer}>
             <Layout className={styles.layout}>

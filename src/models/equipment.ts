@@ -1,6 +1,26 @@
 import { Effect, Subscription, Reducer } from 'umi';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
+import { history } from 'umi';
 import * as apis from './service';
+
+function countDown() {
+    let secondsToGo = 3;
+    const modal = Modal.success({
+        title: '提示',
+        content: `编辑已完成，将在${secondsToGo} 秒后跳转到列表页`,
+    });
+    const timer = setInterval(() => {
+        secondsToGo -= 1;
+        modal.update({
+            content: `编辑已完成，将在${secondsToGo} 秒后跳转到列表页`,
+        });
+    }, 1000);
+    setTimeout(() => {
+        clearInterval(timer);
+        history.push('/equipment');
+        modal.destroy();
+    }, secondsToGo * 1000);
+}
 
 export interface Istate {
     pageSize: number;
@@ -41,9 +61,19 @@ const equipment: EquipmentModels = {
         },
     },
     effects: {
-        *addEquipment({ payload }, { call }) {
-            const data = yield call(apis.addEquipments, payload);
-            message.success('新增成功');
+        *addEquipment({ payload }, { call, put }) {
+            const { type, value } = payload;
+            const data = yield call(apis.addEquipments, value);
+            const { id } = data;
+            if (id) {
+                if (type) {
+                    message.success('新增成功');
+                } else {
+                    // message.success('编辑成功');
+                    // yield put(routerRedux.push('/equipment'));
+                    countDown();
+                }
+            }
         },
         *getEquipmentList({ payload }, { call, put }) {
             const data = yield call(apis.getEquipmentList, {

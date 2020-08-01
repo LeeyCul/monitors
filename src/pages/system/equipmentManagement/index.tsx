@@ -7,7 +7,6 @@ import TableListCardPage from '@/components/tableListCardPage';
 import { quotaName } from '@/assets/asssetsData';
 
 function index({ data, loading, dispatch }: any) {
-    const [visible, setVisible] = useState<Boolean>(false);
     const history = useHistory();
     const columns = [
         {
@@ -44,9 +43,10 @@ function index({ data, loading, dispatch }: any) {
             dataIndex: 'label',
             key: 'label',
             render: (item: any, record: any) => {
-                const { description } = record.additionalInfo;
-                const result = description.length
-                    ? description.map((item: any) => {
+                const { data } = record.additionalInfo;
+                const isArr = Array.isArray(data);
+                const result = isArr
+                    ? data.map((item: any) => {
                           return quotaName[item.target];
                       })
                     : [];

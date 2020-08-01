@@ -1,7 +1,6 @@
-import React from 'react';
-import { Divider, Table } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Divider, Dropdown, Icon, Menu } from 'antd';
 import { connect } from 'umi';
-import moment from 'moment';
 import Filter from './filter';
 import LineChart from '@/components/lineChart';
 import CustomTable from '@/components/customTable';
@@ -10,9 +9,24 @@ import { IHistoryData } from '@/types';
 
 function HistoryData({
     dispatch,
-    list = {},
+    list,
     loading,
+    deviceData,
 }: IHistoryData.IindexState) {
+    const isArr = Array.isArray(deviceData);
+    const defaultDevice = isArr ? deviceData[deviceData.length - 1] : {};
+    const { id } = defaultDevice || {};
+    const { id: devicesId } = id || {};
+    const [deviceId, setDeviceId] = useState<string>(
+        devicesId || '974e0250-c665-11ea-b841-5372d88158bc',
+    );
+
+    useEffect(() => {
+        dispatch({
+            type: 'historyData/getHistoryData',
+            payload: { id: deviceId },
+        });
+    }, [deviceId]);
     const columns = [
         {
             title: '采集时间',
@@ -46,14 +60,17 @@ function HistoryData({
         endTs?: number;
         keys: string;
     }) {
-        dispatch({ type: 'historyData/getHistoryData', payload: value });
+        dispatch({
+            type: 'historyData/getHistoryData',
+            payload: { id: deviceId, condition: value },
+        });
     }
     const chartsData: any = {};
     list &&
         Object.keys(list).forEach((item: any) => {
+            const isArr = Array.isArray(list[item]);
             let arr =
-                list &&
-                list[item] &&
+                isArr &&
                 list[item].map((sub: any) => {
                     return sub['value'];
                 });
@@ -70,9 +87,35 @@ function HistoryData({
         Object.assign(chartsData2, { [item]: list[item] });
     });
 
+    const menu = isArr ? (
+        <Menu onClick={handleMenuClick}>
+            {deviceData.map((item: any) => {
+                const { name, id } = item || {};
+                const { id: ID } = id || {};
+                return <Menu.Item key={ID}>{name}</Menu.Item>;
+            })}
+        </Menu>
+    ) : (
+        <Menu></Menu>
+    );
+
+    function handleMenuClick(e: any) {
+        const { key } = e;
+        setDeviceId(key);
+    }
+
     return (
         <div className={styles.history_conainer}>
-            <h4>历史数据查询</h4>
+            <div className={styles.toggle}>
+                <h4>历史数据查询</h4>
+                <Dropdown overlay={menu}>
+                    <span>
+                        切换设备
+                        <Icon type="down" />
+                    </span>
+                </Dropdown>
+            </div>
+
             <Filter onQuery={handleQuery} />
             <Divider />
             <div className={styles.contentBox}>
@@ -97,9 +140,10 @@ function HistoryData({
     );
 }
 
-const mapStateToProps = ({ historyData, loading }: any) => {
+const mapStateToProps = ({ historyData, equipment, loading }: any) => {
     return {
         list: historyData.list,
+        deviceData: equipment.data,
         loading: loading.effects['historyData/getHistoryData'],
     };
 };
